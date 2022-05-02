@@ -121,28 +121,12 @@ Try {
 		[string]$installPhase = 'Pre-Installation'
 
 		## Show Welcome Message, close Internet Explorer if required, allow up to 3 deferrals, verify there is enough disk space to complete the install, and persist the prompt
-		Show-InstallationWelcome -CloseApps 'Microsoft.Sara' -AllowDefer -DeferTimes 3 -CheckDiskSpace -PersistPrompt
+		Show-InstallationWelcome -CloseApps 'Microsoft.Sara' -CheckDiskSpace -PersistPrompt
 
 		## Show Progress Message (with the default message)
 		Show-InstallationProgress
 
 		## <Perform Pre-Installation tasks here>
-		$installStatus = Get-InstalledApplication -Name 'Microsoft.Sara'
-		If (Test-Path -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\a1a734b8150c1d83") {
-			Write-Log -Message "A registry key associated with an existing version of this software has been detected." -Source 'Pre-Installation' -LogType 'CMTrace'
-			If((Show-InstallationPrompt -Message 'You will need to uninstall the existing version before you proceed. If you choose to continue, the uninstaller will launch in a new window.' -ButtonRightText 'Cancel' -ButtonLeftText 'Continue') -eq "Continue"){
-				$exitCode = Execute-Process -Path "rundll32.exe" -Parameters "dfshim.dll,ShArpMaintain Microsoft.Sara.application, Culture=neutral, PublicKeyToken=bdc860f2c35357b9, processorArchitecture=msil" -WindowStyle "Hidden" -PassThru
-				If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
-			}
-			else {
-				Exit-Script -ExitCode 0
-			}
-			Show-InstallationProgress
-		}
-		Else {
-			Write-Log -Message "Reg key not found" -Source 'Pre-Installation' -LogType 'CMTrace'
-			Show-InstallationProgress
-		}
 
 
 		##*===============================================
@@ -157,7 +141,7 @@ Try {
 		}
 
 		## <Perform Installation tasks here>
-		$exitCode = Execute-Process -Path "$dirFiles\SaraSetup.exe" -Parameters "/quiet" ## -WindowStyle "Hidden"
+		$exitCode = Execute-Process -Path "$dirFiles\SaraSetup.exe" -Parameters "/quiet" -WindowStyle "Hidden"
 		If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 
 
@@ -265,8 +249,8 @@ Catch {
 # SIG # Begin signature block
 # MIIU9wYJKoZIhvcNAQcCoIIU6DCCFOQCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUQ5xhcjfqf3s/ETLbEz6LykmG
-# 6VCgghHXMIIFbzCCBFegAwIBAgIQSPyTtGBVlI02p8mKidaUFjANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUCYX2VQZLTRS0NI/pKctOkOnA
+# jV6gghHXMIIFbzCCBFegAwIBAgIQSPyTtGBVlI02p8mKidaUFjANBgkqhkiG9w0B
 # AQwFADB7MQswCQYDVQQGEwJHQjEbMBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVy
 # MRAwDgYDVQQHDAdTYWxmb3JkMRowGAYDVQQKDBFDb21vZG8gQ0EgTGltaXRlZDEh
 # MB8GA1UEAwwYQUFBIENlcnRpZmljYXRlIFNlcnZpY2VzMB4XDTIxMDUyNTAwMDAw
@@ -366,13 +350,13 @@ Catch {
 # ZSBTaWduaW5nIENBIFIzNgIRAKVN33D73PFMVIK48rFyyjEwCQYFKw4DAhoFAKB4
 # MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQB
 # gjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkE
-# MRYEFL5yHM0frvm1VEND2aAmsWncRCr5MA0GCSqGSIb3DQEBAQUABIIBgBrsM6Sf
-# W58hJCjSrFdVu8NVNwNDwA6pXJswDnAyMuSNDfV21Wph1go3OymUJxD1ccWS45fQ
-# BIxEenvnF9uaqaTwykLMmrl7rpcBkfgDy6KXgXAeXfXEAoQzRx0dn5XJWaJdocSH
-# mDXvtsvOPIFbjYW/EweKC4Zz5a94Uc/f1msf8oKryxGmEjxvnC/OyhgFcLkEUU8+
-# wP+02sTLAEUZdp3rtns+3w3Msl8zTqd0ntOtDN2rGPaUyuR1BkXWr5XlqCNQ+fHD
-# Qwz0VR9m7GG4AcZ26SXEVtJx7Oq+YjiOZd3ZnmrS1puHxJk2FbIxMkbBBzUUCKmw
-# oBc37kvRL9XM5b6zvilVZgcW5RtkkgQzDRgERqQ7g16i6wi1mbzBjbfhIQH9MmCI
-# sV+sr32kTGNRd4zGSO+dE3R3EwJ7VgH+bF/M2ocQ+DF865EExiAV4omPZKWFGsqC
-# hsqiJb1nhOb06sunU8ds/gLOu1jyAwpVwyiepbNOqiC0jX5WyL8XD9pzKA==
+# MRYEFM1aApbld9Dew48+ZzlzCxvulW4+MA0GCSqGSIb3DQEBAQUABIIBgHxCcxGY
+# 3DSZTzo1ApfYTgnrO2eiqWP/rHoO9FEDoT7AfdpGV8VXYGN8JQKLUhDX6gPqTaN1
+# 4duH2U2wc0tMiF7vMDpF8ljx6glT/0box42SWsQfF4yFOHkLTSLBG3niTqezqYk8
+# bKvTv42t5YIiEmSptfBYl+cPAcdfhdvSmm3a3tSqdUvIms1+nZmaOiLjHnAjQtH9
+# EeTcOBbDSuesvmDkH8jmglQTwihcnF5BDn3dTo9pnm9hEEfvACau4GYLPgsL2nFL
+# 6judU+k+/pfXc909Xo1t6EN0Kqlv0CUoaTd2JiMlXmzPbCbcKFTHCEGj9cfNHqOt
+# H8rQBCC0X/iVxmVnS4oH/5siZZ2GUY0zA1KmZWpDTqFhndgHTgigO1TgrbE4mBqc
+# rIMPB0of7sQL47DlGryB4Hkwdw9pPhA123arl6uhiWD9mKE3DIGoF4PtZtZxTict
+# k2PrlZPUl8bfGbVGXLPxHeOzX6R2aK2QDkolRv5uIA/aWXn5+1uUL9uvjg==
 # SIG # End signature block
